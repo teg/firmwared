@@ -67,8 +67,16 @@ libfirmware_a_SOURCES = \
 # ------------------------------------------------------------------------------
 # firmwared
 
-firmwared_SOURCES = src/firmwared.c
-firmwared_LDADD = libfirmware.a
+firmwared_SOURCES = \
+		src/firmwared.c \
+		src/manager.h \
+		src/manager.c
+firmwared_LDADD = \
+		libfirmware.a \
+		$(LIBUDEV_LIBS)
+firmwared_CFLAGS = \
+		$(LIBUDEV_CFLAGS) \
+		$(AM_CFLAGS)
 
 # ------------------------------------------------------------------------------
 # test-basic

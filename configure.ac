@@ -35,6 +35,15 @@ AC_PROG_LN_S
 m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-config])
 
 # ------------------------------------------------------------------------------
+have_libudev=no
+PKG_CHECK_MODULES(LIBUDEV, [ libudev ],
+        [AC_DEFINE(HAVE_LIBUDEV, 1, [Define if libudev is available]) have_libudev=yes], have_libudev=no)
+if test "x$have_libudev" = xno; then
+        AC_MSG_ERROR([*** libudev support required but libraries not found])
+fi
+AM_CONDITIONAL(HAVE_LIBUDEV, [test "$have_libmount" = "yes"])
+
+# ------------------------------------------------------------------------------
 # report
 
 AC_CONFIG_FILES([Makefile])
@@ -42,6 +51,8 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 AC_MSG_RESULT([
         $PACKAGE_NAME $VERSION
+
+        libudev:                ${have_libudev}
 
         prefix:                 ${prefix}
         exec_prefix:            ${exec_prefix}
