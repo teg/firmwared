@@ -1,0 +1,29 @@
+Linux Firmware Loader Daemon
+
+DETAILS:
+        https://github.com/teg/firmwared
+
+BUG REPORTS:
+        https://github.com/teg/firmwared/issues
+
+GIT:
+        git@github.com:teg/firmwared.git
+        https://github.com/teg/firmwared.git
+
+GITWEB:
+        https://github.com/teg/firmwared
+
+LICENSE:
+        Apache Software License 2.0 (LICENSE-APACHE)
+        See COPYING for details.
+
+ABOUT:
+        The Linux Firmware Loader Daemon monitors the kernel for firmware
+        requests and uploads the firmware blobs it has via the sysfs interface.
+
+        Two modes exist, a best-effort mode and a final mode. In the former
+        mode, we will not cancel firmware requests if we cannot fulfill them,
+        but in the latter we will. Typically the former mode will be used in an
+        initrd, or before all relevant directories have been mounted, and the
+        latter will be used when we know that no more firmware is going to
+        become available.
