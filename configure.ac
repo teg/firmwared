@@ -44,6 +44,23 @@ fi
 AM_CONDITIONAL(HAVE_LIBUDEV, [test "$have_libmount" = "yes"])
 
 # ------------------------------------------------------------------------------
+AC_ARG_WITH(firmware-path,
+        AS_HELP_STRING([--with-firmware-path=DIR[[[:DIR[...]]]]],
+           [Firmware search path (default="/usr/lib/firmware:/lib/firmware")]),
+        [], [with_firmware_path="/usr/lib/firmware:/lib/firmware"])
+OLD_IFS=$IFS
+IFS=:
+for i in $with_firmware_path; do
+       if test "x${FIRMWARE_PATH}" = "x"; then
+              FIRMWARE_PATH="\\\"${i}/\\\""
+       else
+              FIRMWARE_PATH="${FIRMWARE_PATH}, \\\"${i}/\\\""
+       fi
+done
+IFS=$OLD_IFS
+AC_SUBST(FIRMWARE_PATH)
+
+# ------------------------------------------------------------------------------
 # report
 
 AC_CONFIG_FILES([Makefile])
@@ -51,6 +68,8 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 AC_MSG_RESULT([
         $PACKAGE_NAME $VERSION
+
+	firmware_path:          ${FIRMWARE_PATH}
 
         libudev:                ${have_libudev}
 

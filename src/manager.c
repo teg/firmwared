@@ -16,8 +16,7 @@
 #define ELEMENTSOF(x) (sizeof(x)/sizeof(x[0]))
 
 const char* const firmware_dirs[] = {
-        "/usr/lib/firmware",
-        "/lib/firmware",
+	FIRMWARE_PATH
 };
 
 struct Manager {

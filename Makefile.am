@@ -23,7 +23,8 @@ EXTRA_DIST =
 AM_CPPFLAGS = \
 	-include $(top_builddir)/build/config.h \
 	-I $(top_srcdir)/src \
-	-I $(top_builddir)/src
+	-I $(top_builddir)/src \
+	-DFIRMWARE_PATH="$(FIRMWARE_PATH)"
 
 AM_CFLAGS = \
 	-fdata-sections \
