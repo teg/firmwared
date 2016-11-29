@@ -1,10 +1,12 @@
 #pragma once
 
+#include <stdbool.h>
+
 #define _cleanup_(_x) __attribute__((__cleanup__(_x)))
 
 typedef struct Manager Manager;
 
-int manager_new(Manager **managerp);
+int manager_new(Manager **managerp, bool tentative);
 void manager_free(Manager *manager);
 
 int manager_run(Manager *manager);

@@ -21,9 +21,10 @@ static int firmware_set_loading(int loadingfd, int state) {
         return 0;
 }
 
-int firmware_load(int devicefd, int firmwarefd) {
+int firmware_load(int devicefd, int firmwarefd, bool tentative) {
         int loadingfd = -1, datafd = -1;
         struct stat statbuf;
+        bool started = false;
         int r;
 
         loadingfd = openat(devicefd, "loading", O_CLOEXEC);
@@ -52,6 +53,8 @@ int firmware_load(int devicefd, int firmwarefd) {
         if (r < 0)
                 goto finish;
 
+        started = true;
+
         while (statbuf.st_size) {
                 ssize_t size;
                 off_t offset = 0;
@@ -72,7 +75,7 @@ finish:
                 close(loadingfd);
         if (datafd >= 0)
                 close(datafd);
-        if (r < 0 && r != -ENOENT) {
+        if (r < 0 && r != -ENOENT && (!tentative || started)) {
                 firmware_set_loading(loadingfd, LOADING_CANCEL);
                 return r;
         } else

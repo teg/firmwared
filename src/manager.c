@@ -26,9 +26,10 @@ struct Manager {
         int devicesfd;
         int signalfd;
         int epollfd;
+        bool tentative;
 };
 
-int manager_new(Manager **managerp) {
+int manager_new(Manager **managerp, bool tentative) {
         _cleanup_(manager_freep) Manager *m = NULL;
         struct utsname kernel;
         struct epoll_event ep_udev = { .events = EPOLLIN };
@@ -40,6 +41,7 @@ int manager_new(Manager **managerp) {
         if (!m)
                 return -ENOMEM;
 
+        m->tentative = tentative;
         m->devicesfd = -1;
         m->signalfd = -1;
         m->epollfd = -1;
@@ -138,10 +140,10 @@ static int manager_handle_device(Manager *manager, struct udev_device *device) {
 
         firmwarefd = manager_find_firmware(manager, udev_device_get_property_value(device, "FIRMWARE"));
         if (firmwarefd >= 0) {
-                r = firmware_load(devicefd, firmwarefd);
+                r = firmware_load(devicefd, firmwarefd, manager->tentative);
                 if (r < 0)
                         return r;
-        } else {
+        } else if (!manager->tentative) {
                 r = firmware_cancel_load(devicefd);
                 if (r < 0)
                         return r;
