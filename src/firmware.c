@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "firmware.h"
+#include "log-util.h"
 
 #define LOADING_START   (1)
 #define LOADING_CANCEL  (-1)
@@ -45,6 +46,7 @@ int firmware_load(int devicefd, int firmwarefd, bool tentative) {
         }
 
         if (statbuf.st_size == 0) {
+                log_warn("firmware is empty; ignoring request");
                 r = -EIO;
                 goto finish;
         }

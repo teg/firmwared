@@ -11,6 +11,7 @@
 
 #include "firmware.h"
 #include "manager.h"
+#include "log-util.h"
 
 #define ELEMENTSOF(x) (sizeof(x)/sizeof(x[0]))
 
@@ -122,6 +123,7 @@ static int manager_find_firmware(Manager *manager, const char *name) {
                         return firmwarefd;
         }
 
+        log_info("firmware '%s' not found", name);
         return -ENOENT;
 }
 
@@ -132,18 +134,22 @@ static void closep(int *fdp) {
 
 static int manager_handle_device(Manager *manager, struct udev_device *device) {
         _cleanup_(closep) int devicefd = -1, firmwarefd = -1;
+        const char *name;
         int r;
 
         devicefd = openat(manager->devicesfd, udev_device_get_syspath(device), O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
         if (devicefd < 0)
                 return errno == ENOENT ? 0 : -errno;
 
-        firmwarefd = manager_find_firmware(manager, udev_device_get_property_value(device, "FIRMWARE"));
+        name = udev_device_get_property_value(device, "FIRMWARE");
+        firmwarefd = manager_find_firmware(manager, name);
         if (firmwarefd >= 0) {
+                log_info("load firmware %s", name);
                 r = firmware_load(devicefd, firmwarefd, manager->tentative);
                 if (r < 0)
                         return r;
         } else if (!manager->tentative) {
+                log_info("cancel firmware load %s", name);
                 r = firmware_cancel_load(devicefd);
                 if (r < 0)
                         return r;

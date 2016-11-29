@@ -70,7 +70,8 @@ libfirmware_a_SOURCES = \
 firmwared_SOURCES = \
 		src/firmwared.c \
 		src/manager.h \
-		src/manager.c
+		src/manager.c \
+		src/log-util.h
 firmwared_LDADD = \
 		libfirmware.a \
 		$(LIBUDEV_LIBS)
