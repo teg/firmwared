@@ -27,13 +27,13 @@ int firmware_load(int devicefd, int firmwarefd, bool tentative) {
         bool started = false;
         int r;
 
-        loadingfd = openat(devicefd, "loading", O_CLOEXEC);
+        loadingfd = openat(devicefd, "loading", O_CLOEXEC|O_WRONLY);
         if (loadingfd < 0) {
                 r = -errno;
                 goto finish;
         }
 
-        datafd = openat(devicefd, "data", O_CLOEXEC);
+        datafd = openat(devicefd, "data", O_CLOEXEC|O_WRONLY);
         if (datafd < 0) {
                 r = -errno;
                 goto finish;
@@ -86,7 +86,7 @@ int firmware_cancel_load(int devicefd) {
         int loadingfd = -1;
         int r;
 
-        loadingfd = openat(devicefd, "loading", O_CLOEXEC);
+        loadingfd = openat(devicefd, "loading", O_CLOEXEC|O_WRONLY);
         if (loadingfd < 0) {
                 r = -errno;
                 goto finish;
