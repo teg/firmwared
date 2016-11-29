@@ -46,8 +46,8 @@ AM_CONDITIONAL(HAVE_LIBUDEV, [test "$have_libmount" = "yes"])
 # ------------------------------------------------------------------------------
 AC_ARG_WITH(firmware-path,
         AS_HELP_STRING([--with-firmware-path=DIR[[[:DIR[...]]]]],
-           [Firmware search path (default="/usr/lib/firmware:/lib/firmware")]),
-        [], [with_firmware_path="/usr/lib/firmware:/lib/firmware"])
+           [Firmware search path (default="/lib/firmware/updates:/lib/firmware")]),
+        [], [with_firmware_path="/lib/firmware/updates:/lib/firmware"])
 OLD_IFS=$IFS
 IFS=:
 for i in $with_firmware_path; do
