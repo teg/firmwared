@@ -58,18 +58,28 @@ AM_LDFLAGS = \
 	-pie
 
 # ------------------------------------------------------------------------------
+# libfirmware.a
+
+libfirmware_a_SOURCES = \
+	src/firmware.h \
+	src/firmware.c
+
+# ------------------------------------------------------------------------------
 # firmwared
 
 firmwared_SOURCES = src/firmwared.c
+firmwared_LDADD = libfirmware.a
 
 # ------------------------------------------------------------------------------
 # test-basic
 
 test_basic_SOURCES = src/test-basic.c
+test_basic_LDADD = libfirmware.a
 
 # ------------------------------------------------------------------------------
 # targets
 
+noinst_LIBRARIES = libfirmware.a
 bin_PROGRAMS = firmwared
 default_tests = \
 	test-basic
