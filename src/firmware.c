@@ -83,7 +83,7 @@ finish:
 }
 
 int firmware_cancel_load(int devicefd) {
-        int loadingfd = -1;
+        int loadingfd;
         int r;
 
         loadingfd = openat(devicefd, "loading", O_CLOEXEC|O_WRONLY);
@@ -93,8 +93,6 @@ int firmware_cancel_load(int devicefd) {
         }
 
         r = firmware_set_loading(loadingfd, LOADING_CANCEL);
-        if (r < 0)
-                goto finish;
 
 finish:
         if (loadingfd >= 0)
