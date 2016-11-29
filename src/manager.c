@@ -234,7 +234,7 @@ int manager_run(Manager *manager) {
 
                                 device = udev_monitor_receive_device(manager->udev_monitor);
                                 if (!device)
-                                        continue;
+                                        break;
 
                                 if (strcmp(udev_device_get_action(device), "add") &&
                                     strcmp(udev_device_get_action(device), "move"))
