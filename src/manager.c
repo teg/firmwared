@@ -64,7 +64,7 @@ int manager_new(Manager **managerp, bool tentative) {
         if (!m->udev)
                 return -errno;
 
-        m->udev_monitor = udev_monitor_new_from_netlink(m->udev, "udev");
+        m->udev_monitor = udev_monitor_new_from_netlink(m->udev, "kernel");
         if (!m->udev_monitor)
                 return -errno;
 
