@@ -6,7 +6,7 @@
 
 typedef struct Manager Manager;
 
-int manager_new(Manager **managerp, bool tentative);
+int manager_new(Manager **managerp, bool tentative, const char *path);
 void manager_free(Manager *manager);
 
 int manager_run(Manager *manager);

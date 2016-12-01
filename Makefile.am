@@ -87,9 +87,46 @@ test_basic_SOURCES = src/test-basic.c
 test_basic_LDADD = libfirmware.a
 
 # ------------------------------------------------------------------------------
+# test-runner
+
+if TEST_RUNNER
+test_runner_SOURCES = \
+	tools/test-runner.c
+
+libtester_a_SOURCES = \
+	tools/tester.c \
+	tools/tester.h \
+	tools/util.h \
+	tools/util.c
+libtester_a_CFLAGS = \
+	$(GLIB_CFLAGS) \
+        $(AM_CFLAGS)
+libtester_a_LDLAGS = \
+	$(GLIB_LDLAGS)
+
+firmware_tester_SOURCES = \
+	tools/firmware-tester.c
+firmware_tester_CFLAGS = \
+	$(GLIB_CFLAGS) \
+        $(AM_CFLAGS)
+firmware_tester_LDADD = \
+        libtester.a \
+	$(GLIB_LIBS)
+endif
+
+# ------------------------------------------------------------------------------
 # targets
 
 noinst_LIBRARIES = libfirmware.a
+
+if TEST_RUNNER
+noinst_LIBRARIES += \
+        libtester.a
+noinst_PROGRAMS = \
+	test-runner \
+	firmware_tester
+endif
+
 bin_PROGRAMS = firmwared
 default_tests = \
 	test-basic

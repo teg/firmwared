@@ -15,8 +15,9 @@
 
 #define ELEMENTSOF(x) (sizeof(x)/sizeof(x[0]))
 
-const char* const firmware_dirs[] = {
-	FIRMWARE_PATH
+const char* firmware_dirs[] = {
+        FIRMWARE_PATH,
+        NULL
 };
 
 struct Manager {
@@ -29,13 +30,16 @@ struct Manager {
         bool tentative;
 };
 
-int manager_new(Manager **managerp, bool tentative) {
+int manager_new(Manager **managerp, bool tentative, const char *path) {
         _cleanup_(manager_freep) Manager *m = NULL;
         struct utsname kernel;
         struct epoll_event ep_udev = { .events = EPOLLIN };
         struct epoll_event ep_signal = { .events = EPOLLIN };
         sigset_t mask;
         int r;
+
+        /* the last entry is reserverd for runtime configuration */
+        firmware_dirs[ELEMENTSOF(firmware_dirs) - 1] = path;
 
         m = calloc(sizeof(*m) + 2 * sizeof(int) * ELEMENTSOF(firmware_dirs), 1);
         if (!m)
@@ -52,8 +56,13 @@ int manager_new(Manager **managerp, bool tentative) {
                 return -errno;
 
         for (unsigned int i = 0; i < ELEMENTSOF(firmware_dirs); i ++) {
-                m->firmwaredirfds[2 * i] = openat(AT_FDCWD, firmware_dirs[i], O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
-                m->firmwaredirfds[2 * i + 1] = openat(m->firmwaredirfds[2 * i], kernel.release, O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
+                if (firmware_dirs[i]) {
+                        m->firmwaredirfds[2 * i] = openat(AT_FDCWD, firmware_dirs[i], O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
+                        m->firmwaredirfds[2 * i + 1] = openat(m->firmwaredirfds[2 * i], kernel.release, O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
+                } else {
+                        m->firmwaredirfds[2 * i] = -1;
+                        m->firmwaredirfds[2 * i + 1] = -1;
+                }
         }
 
         m->devicesfd = openat(AT_FDCWD, "/sys/devices", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
