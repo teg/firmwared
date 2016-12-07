@@ -1,0 +1,4 @@
+#! /bin/sh
+
+scripts/config --enable CONFIG_TEST_FIRMWARE
+scripts/config --enable FW_LOADER_USER_HELPER_FALLBACK
