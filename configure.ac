@@ -69,7 +69,7 @@ AC_OUTPUT
 AC_MSG_RESULT([
         $PACKAGE_NAME $VERSION
 
-	firmware_path:          ${FIRMWARE_PATH}
+        firmware_path:          ${FIRMWARE_PATH}
 
         libudev:                ${have_libudev}
 
