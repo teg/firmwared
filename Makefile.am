@@ -70,6 +70,7 @@ libfirmware_a_SOURCES = \
 
 firmwared_SOURCES = \
 		src/firmwared.c \
+                src/firmwared.h \
 		src/manager.h \
 		src/manager.c \
 		src/log-util.h

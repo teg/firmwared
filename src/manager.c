@@ -9,15 +9,10 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
+#include "firmwared.h"
 #include "firmware.h"
 #include "manager.h"
 #include "log-util.h"
-
-#define ELEMENTSOF(x) (sizeof(x)/sizeof(x[0]))
-
-const char* const firmware_dirs[] = {
-	FIRMWARE_PATH
-};
 
 struct Manager {
         struct udev *udev;
@@ -37,7 +32,7 @@ int manager_new(Manager **managerp, bool tentative) {
         sigset_t mask;
         int r;
 
-        m = calloc(sizeof(*m) + 2 * sizeof(int) * ELEMENTSOF(firmware_dirs), 1);
+        m = calloc(sizeof(*m) + 2 * sizeof(int) * firmware_dirs_size, 1);
         if (!m)
                 return -ENOMEM;
 
@@ -51,7 +46,7 @@ int manager_new(Manager **managerp, bool tentative) {
         if (r < 0)
                 return -errno;
 
-        for (unsigned int i = 0; i < ELEMENTSOF(firmware_dirs); i ++) {
+        for (unsigned int i = 0; i < firmware_dirs_size; i ++) {
                 m->firmwaredirfds[2 * i] = openat(AT_FDCWD, firmware_dirs[i], O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
                 m->firmwaredirfds[2 * i + 1] = openat(m->firmwaredirfds[2 * i], kernel.release, O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC|O_PATH);
         }
@@ -107,7 +102,7 @@ void manager_free(Manager *m) {
         udev_unref(m->udev);
         if (m->devicesfd >= 0)
                 close(m->devicesfd);
-        for (unsigned int i = 0; i < 2 * ELEMENTSOF(firmware_dirs); i ++)
+        for (unsigned int i = 0; i < 2 * firmware_dirs_size; i ++)
                 if (m->firmwaredirfds[i] >= 0)
                         close(m->firmwaredirfds[i]);
         free(m);
@@ -116,7 +111,7 @@ void manager_free(Manager *m) {
 static int manager_find_firmware(Manager *manager, const char *name) {
         int firmwarefd;
 
-        for (unsigned int i = 0; i < 2 * ELEMENTSOF(firmware_dirs); i ++) {
+        for (unsigned int i = 0; i < 2 * firmware_dirs_size; i ++) {
                 firmwarefd = openat(manager->firmwaredirfds[i], name, O_RDONLY|O_NONBLOCK|O_CLOEXEC);
                 if (firmwarefd >= 0)
                         return firmwarefd;
