@@ -4,6 +4,14 @@
 #include "manager.h"
 #include "log-util.h"
 
+#define ELEMENTSOF(x) (sizeof(x)/sizeof(x[0]))
+
+const char *firmware_dirs[] = {
+	FIRMWARE_PATH
+};
+
+size_t firmware_dirs_size = ELEMENTSOF(firmware_dirs);
+
 int main(int argc, char **argv) {
         _cleanup_(manager_freep) Manager *manager = NULL;
         bool tentative = false;
