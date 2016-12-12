@@ -44,6 +44,22 @@ fi
 AM_CONDITIONAL(HAVE_LIBUDEV, [test "$have_libmount" = "yes"])
 
 # ------------------------------------------------------------------------------
+AC_ARG_ENABLE(test-runner,
+        AC_HELP_STRING([--disable-test-runner], [build test-runner for testing]),
+        [enable_test_runner=${enableval}])
+if test "x$enable_test_runner" != xno; then
+        have_glib=no
+        PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.28 gio-2.0,
+                [AC_DEFINE(HAVE_GLIB, 1, [Define if libglib is available]) have_glib=yes], have_glib=no)
+        if test "x$have_glib" = xno; then
+                AC_MSG_ERROR([*** libglib support required but libraries not found])
+        fi
+fi
+AM_CONDITIONAL(TEST_RUNNER, [test "x$enable_test_runner" != "xno"])
+AC_SUBST(GLIB_CFLAGS)
+AC_SUBST(GLIB_LIBS)
+
+# ------------------------------------------------------------------------------
 AC_ARG_WITH(firmware-path,
         AS_HELP_STRING([--with-firmware-path=DIR[[[:DIR[...]]]]],
            [Firmware search path (default="/lib/firmware/updates:/lib/firmware")]),
