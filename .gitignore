@@ -25,3 +25,6 @@
 
 /test-api
 /test-basic
+
+/firmware_tester
+/test-runner
