@@ -439,6 +439,7 @@ static void test_firmware_load(const void *test_data) {
         if (!check_content(TEST_FIRMWARE_DEV, user->cfg->content)) {
                 tester_warn("content is not matching");
                 tester_test_failed();
+                return;
         }
 
         tester_test_passed();
