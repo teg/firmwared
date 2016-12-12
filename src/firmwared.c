@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <getopt.h>
 
 #include "manager.h"
 #include "log-util.h"
@@ -60,6 +61,23 @@ static void cleanup_firmware_dirs(void) {
                 free(firmware_dirs);
 }
 
+static void usage(void) {
+	printf("firmwared - Linux Firmware Loader Daemon\n"
+		"Usage:\n");
+	printf("\tfirmwared [options]\n");
+	printf("Options:\n"
+		"\t-t, --tentative        Defer loading of non existing firmwares\n"
+		"\t-d, --dirs [paths]     Firmware loading paths\n"
+		"\t-h, --help             Show help options\n");
+}
+
+static const struct option main_options[] = {
+	{ "tentative",     no_argument,       NULL, 't' },
+	{ "dirs",          required_argument, NULL, 'd' },
+	{ "help",          no_argument,       NULL, 'h' },
+	{ }
+};
+
 int main(int argc, char **argv) {
         _cleanup_(manager_freep) Manager *manager = NULL;
         bool tentative = false;
@@ -68,11 +86,26 @@ int main(int argc, char **argv) {
 
         setbuf(stdout, NULL);
 
-        for (int i = 0; i < argc; i++) {
-                if (strcmp("--tentative", argv[i]) == 0)
+        for (;;) {
+                int opt;
+
+                opt = getopt_long(argc, argv, "td:h", main_options, NULL);
+                if (opt < 0)
+                        break;
+
+                switch (opt) {
+                case 't':
                         tentative = true;
-                if (strcmp("--dir", argv[i]) == 0 && i + 1 < argc)
-                        dirs = argv[i + 1];
+                        break;
+                case 'd':
+                        dirs = optarg;
+                        break;
+                case 'h':
+                        usage();
+                        return EXIT_SUCCESS;
+                default:
+                        return EXIT_FAILURE;
+                }
         }
 
         r = setup_firmware_dirs(dirs);
