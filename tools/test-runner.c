@@ -280,7 +280,7 @@ static void run_command(char *cmdname, char *home)
 {
         char *argv[9], *envp[3];
         int pos = 0, idx = 0;
-        pid_t pid, daemon_pid;
+        pid_t pid;
 
 start_next:
         if (run_auto) {
@@ -371,11 +371,6 @@ start_next:
                                                 corpse, WSTOPSIG(status));
                 else if (WIFCONTINUED(status))
                         printf("Process %d continued\n", corpse);
-
-                if (corpse == daemon_pid) {
-                        printf("firmware daemon terminated\n");
-                        daemon_pid = -1;
-                }
 
                 if (corpse == pid)
                         break;
