@@ -320,8 +320,6 @@ static bool check_content(const char *filename, const char *content) {
         return !strcmp(buf, content);
 }
 
-static pid_t daemon_pid = -1;
-
 static void daemon_callback(pid_t pid, int status, void *user_data)
 {
         if (WIFEXITED(status))
@@ -342,12 +340,6 @@ static const char *daemon_table[] = {
         "/usr/sbin/firmwared",
         NULL
 };
-
-static void teardown_daemon(void) {
-        if (daemon_pid > 0)
-                kill(daemon_pid, SIGTERM);
-        daemon_pid = -1;
-}
 
 static pid_t run_daemon(const char *path, bool tentative) {
         const char *home;
@@ -481,7 +473,7 @@ static void test_tentative_daemon_reload(void *user_data) {
         struct user_data *user = user_data;
 
         tester_debug("kill daemon");
-        teardown_daemon();
+        kill(user->pid, SIGTERM);
         setup_firmware_files(&cfg_tentative);
 
         tester_debug("restart daemon in non tentative mode");
