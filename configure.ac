@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # versions
 
-AC_PREREQ([2.64])
+AC_PREREQ([2.71])
 AC_INIT([firmwared],
         [1],
         [http://www.github.com/teg/firmwared/issues],
@@ -27,7 +27,7 @@ AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax no-di
 AM_SILENT_RULES([yes])
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([CANONICAL_HOST], "$host", [Canonical host string.])
-AC_PROG_CC_C99
+AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_SED
 AC_PROG_LN_S
@@ -45,7 +45,7 @@ AM_CONDITIONAL(HAVE_LIBUDEV, [test "$have_libmount" = "yes"])
 
 # ------------------------------------------------------------------------------
 AC_ARG_ENABLE(test-runner,
-        AC_HELP_STRING([--disable-test-runner], [build test-runner for testing]),
+        AS_HELP_STRING([--disable-test-runner], [build test-runner for testing]),
         [enable_test_runner=${enableval}])
 if test "x$enable_test_runner" != xno; then
         have_glib=no
